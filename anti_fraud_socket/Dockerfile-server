@@ -1,0 +1,8 @@
+FROM python:3.7
+
+RUN mkdir /anti_fraud_socket
+COPY _server.py /anti_fraud_socket/server.py
+COPY requirements.txt /anti_fraud_socket/requirements.txt
+WORKDIR /anti_fraud_socket
+
+RUN pip install --upgrade pip && pip install -r requirements.txt

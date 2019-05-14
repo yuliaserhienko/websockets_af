@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications</title>
+</head>
+<body>
+<div id="notification-line"></div>
+</body>
+<script>
+    const webSocketUrl = "ws://" + window.location.host + "/ws/notification/";
+    const notificationSocket = new WebSocket(webSocketUrl);
+    console.log(notificationSocket);
+
+    notificationSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const message = data['message'];
+        document.querySelector('#notification-line').innerHTML += (message + '<br>');
+    };
+    notificationSocket.onclose = function(e) {
+        console.error('Socket closed unexpectedly');
+    };
+</script>
+</html>

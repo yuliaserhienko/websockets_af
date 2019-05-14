@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/src
+    links:
+      - redis
+    ports:
+      - 8000:8000
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    ports:
+      - 6388:6379
+  socket-srv:
+    build:
+      context: ./anti_fraud_socket
+      dockerfile: Dockerfile-server
+    command: python -m server.py
+    volumes:
+      - ./anti_fraud_socket:/anti_fraud_socket
+    ports:
+      - 50007:50007
+    env_file:
+      - .envs
+    depends_on:
+      - web
+  socket-client:
+    build:
+      context: ./anti_fraud_socket
+      dockerfile: Dockerfile-client
+    command: python -m client.py
+    depends_on:
+      - socket-srv
+      - web
+    volumes:
+      - ./anti_fraud_socket:/anti_fraud_socket
+    env_file:
+      - .envs
+    links:
+      - socket-srv
+      - web
